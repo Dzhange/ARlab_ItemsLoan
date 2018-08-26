@@ -1,7 +1,8 @@
+#encode :utf-8
 
 from django.db import models
 from django.contrib.auth.models import User
-from multiselectfield import MultiSelectField
+# from multiselectfield import MultiSelectField
 
 # Create your models here.
 ROOM_LIST ={
@@ -14,7 +15,7 @@ ROOM_LIST ={
     }
 
 STUFF_NAME = {
-        ('MC','iMac'),
+        ('MC','iMac'), 
         ('DT','Ddesktop'),
         ('PT','Printer'),
         ('SP','Speaker'),
@@ -46,9 +47,11 @@ class Room(models.Model):
 class BorrowRecord(models.Model):
     StartTime = models.DateTimeField()
     EndTime =  models.DateTimeField()
-    ApplyTime = models.DateTimeField()
+    ApplyTime = models.DateTimeField(auto_now_add=True)
     is_approved = models.BooleanField(default=False)
-    StuffToUse = models.ManyToManyField(Stuff,blank = True)
+    StuffToUse = models.ManyToManyField(Stuff,blank = True, related_name = 'common')
+    OtherRequests = models.CharField(default = '无',max_length=100,blank = True)
+    SecretObjects = models.ManyToManyField(Stuff,blank = True,related_name = 'secret')
     RoomToUse = models.ManyToManyField(Room,blank = True)
     borrower= models.ForeignKey(User, on_delete=models.CASCADE)
 

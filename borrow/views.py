@@ -1,7 +1,17 @@
+#encode:utf-8
+
 from django.shortcuts import render
 from django.http import HttpRequest
 from django.shortcuts import render,HttpResponseRedirect
+from django.http import HttpResponse, Http404
+from .forms import *
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.models import User
+from .models import *
 
+
+ADMIN = ('YangTheBoss','Django','Aoliao')
+ALL_ROOM = ('301的全部房间','301_A','301_B','301_C','301_D','302')
 
 
 # Create your views here.
@@ -10,8 +20,51 @@ def index(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('borrow/login')
     else:
-        return render(request, 'borrow/homepage.html')
+        user = request.user
+        if user.username not in ADMIN:
+            return render(request,'choose.html')
+        return render(request, 'borrow/administration.html')
 
+def Homepage(request):
+
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('borrow/login')
+    else:
+        context = {
+            'stuff_type':STUFF_NAME,
+            'room_type': ALL_ROOM,
+        }
+        form = BorrowRecordForm(request.POST or None)  
+        print(request.POST)
+        if form.is_valid():
+            raw_record = form.save(commit = False)
+            raw_record.borrower = request.user
+            return HttpResponseRedirect('/borrow')
+            
+            
+
+        if form.is_valid():
+            book = form.save(commit=False)
+            thisISBN = book.ISBN
+            existingISBN = Book.objects.filter(ISBN = thisISBN)
+            existingBookName = Book.objects.filter(BookName = book.BookName)
+            # save the image front internet
+            book.save()
+            url = book.FrontPage
+            data = urllib.request.urlretrieve(url)
+            frontpage = Image.open(data[0])
+            print(book.id)
+            print(book.pk)
+            new_route = './book/static/' + str(book.id) + '_frontpage.jpg'
+            frontpage.save(new_route,'JPEG')
+            book.FrontPage = str(book.id) + '_frontpage.jpg'
+            book.save()
+            return HttpResponseRedirect('/book')
+        context = {
+            "form": form,
+            "all_user" : User.objects.all(),
+        }
+        return render(request, 'book/add_book.html', context)          
 
 def BorrowRequest(request, book_id):
     if not request.user.is_authenticated:
@@ -19,11 +72,81 @@ def BorrowRequest(request, book_id):
     else:    
         user = request.user
         form = BorrowRecordForm(request.POST or None, request.FILES or None)
-        print(form)
         if form.is_valid(): 
             record = form.save(commit=False)
             record.borrower = request.user
-            record.book = get_object_or_404(Book, pk=book_id)
             record.save()
-            return HttpResponseRedirect("/book/%d/profile" % user.id)
-        return HttpResponseRedirect('borrow/')
+            return HttpResponseRedirect("/borrow/%d/history" % user.id)
+        context = {
+            "ErrorMessage":"FORM ERROR : FORM UPLOADED IS NOT VALID"
+        }
+        return render(request,'borrow/',context)
+
+
+def PersonalHistory(request,user_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('borrow/login')
+    else:
+        if request.user.id != user_id:
+            return HttpResponse(status = 403)
+        else:
+            context = {
+                'user' : request.user,
+            }
+            return render(request,'borrow/personalhistory.html',context)
+
+
+def AllHistory(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/borrow')
+    else:
+        if request.user.username in ADMIN:
+            PerformedLoan = BorrowRequest.objects.filter(is_approved = True)
+            context = {
+                'all_records':PerformedLoan
+            }
+            return render(request,'borrow/allhistory.html',context)
+        return render(request,'borrow/')
+
+"""
+Functions related to user authentication
+"""
+def register(request):
+    form = UserForm(request.POST or None)
+    if form.is_valid():
+        user = form.save(commit=False)
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user.set_password(password)
+        user.save()
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return render(request, 'borrow/homepage.html')
+
+    context = {
+        "form": form,
+    }
+    return render(request, 'book/register.html', context)
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if user.username in ADMIN:
+                return HttpResponseRedirect('borrow/administration')
+            return HttpResponseRedirect('borrow/homepage')
+        else :
+            return render(request, 'borrow/login.html')
+    else:
+        return render(request, 'borrow/login.html')
+
+def logout(request):
+    if not request.user.is_authenticated:
+        return render(request, 'borrow/login.html')
+    else:
+        return render(request, 'borrow/homepage_guest.html')
