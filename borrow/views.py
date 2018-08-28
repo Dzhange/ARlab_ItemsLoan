@@ -1,4 +1,4 @@
-#encode:utf-8
+# encode:utf-8
 
 from django.shortcuts import render
 from django.http import HttpRequest
