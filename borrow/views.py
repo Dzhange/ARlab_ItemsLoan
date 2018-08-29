@@ -22,7 +22,12 @@ def index(request):
     else:
         user = request.user
         if user.username not in ADMIN:
-            return render(request,'choose.html')
+            context = {
+                'stuff_type':STUFF_NAME,
+                'room_type': ALL_ROOM,
+            }
+            print(request.POST)
+            return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
 
 def Homepage(request):
@@ -40,26 +45,6 @@ def Homepage(request):
             raw_record = form.save(commit = False)
             raw_record.borrower = request.user
             return HttpResponseRedirect('/borrow')
-            
-            
-
-        if form.is_valid():
-            book = form.save(commit=False)
-            thisISBN = book.ISBN
-            existingISBN = Book.objects.filter(ISBN = thisISBN)
-            existingBookName = Book.objects.filter(BookName = book.BookName)
-            # save the image front internet
-            book.save()
-            url = book.FrontPage
-            data = urllib.request.urlretrieve(url)
-            frontpage = Image.open(data[0])
-            print(book.id)
-            print(book.pk)
-            new_route = './book/static/' + str(book.id) + '_frontpage.jpg'
-            frontpage.save(new_route,'JPEG')
-            book.FrontPage = str(book.id) + '_frontpage.jpg'
-            book.save()
-            return HttpResponseRedirect('/book')
         context = {
             "form": form,
             "all_user" : User.objects.all(),
