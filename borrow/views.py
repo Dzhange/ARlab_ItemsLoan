@@ -11,8 +11,6 @@ from .models import *
 
 
 ADMIN = ('YangTheBoss','Django','Aoliao')
-ALL_ROOM = ('301的全部房间','301_A','301_B','301_C','301_D','302')
-
 
 # Create your views here.
 def index(request):
@@ -24,9 +22,12 @@ def index(request):
         if user.username not in ADMIN:
             context = {
                 'stuff_type':STUFF_NAME,
-                'room_type': ALL_ROOM,
+                'room_type': ROOM_LIST,
             }
-            print(request.POST)
+            if request.method == 'POST':
+                info = request.POST
+                print(info)
+                
             return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
 

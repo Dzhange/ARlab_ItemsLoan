@@ -22,6 +22,15 @@ STUFF_NAME = {
         ('EP','EarPhone'),
     }
 
+
+s_STUFF_NAME = {
+        'iMac', 
+        'Ddesktop',
+        'Printer',
+        'Speaker',
+        'EarPhone',
+    }
+
 STATUS_LIST = {
         ('PF','Perfect'),
         ('SB','Slightly Broken'),
@@ -29,7 +38,7 @@ STATUS_LIST = {
     }
 
 class Stuff(models.Model):
-    spec = models.CharField(max_length = 2,choices = STUFF_NAME)
+    spec = models.CharField(max_length = 20,choices = STUFF_NAME)
     status = models.CharField(max_length = 2, choices = STATUS_LIST)
     device_id = models.IntegerField(unique=True)
     is_booked = models.BooleanField(default=False)
