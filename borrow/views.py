@@ -26,31 +26,52 @@ def index(request):
             }
             if request.method == 'POST':
                 info = request.POST
-                print(info)
-                
+                print (info)
+                starttime = info.__getitem__('StartTime')
+                endtime = info.__getitem__('EndTime')
+                otherrequests = info.__getitem__('OtherRequests')
+                record = BorrowRecord(
+                    StartTime=starttime,
+                    EndTime = endtime,
+                    borrower= request.user,
+                    OtherRequests = otherrequests,
+                )
+                record.save()
+                for key in info.items():
+                    if "StaffToUse" in key:
+                        temp = info.__getitem__(key)
+                        remainingstuff = BorrowRecord.objects.filter( spec = temp).filter(is_booked = false)
+                        print("temp is ",temp)
+                        print("remainstuff type is ",type(remainingstuff))
+                print (record.StartTime)
             return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
 
-def Homepage(request):
+# def Homepage(request):
 
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('borrow/login')
-    else:
-        context = {
-            'stuff_type':STUFF_NAME,
-            'room_type': ALL_ROOM,
-        }
-        form = BorrowRecordForm(request.POST or None)  
-        print(request.POST)
-        if form.is_valid():
-            raw_record = form.save(commit = False)
-            raw_record.borrower = request.user
-            return HttpResponseRedirect('/borrow')
-        context = {
-            "form": form,
-            "all_user" : User.objects.all(),
-        }
-        return render(request, 'book/add_book.html', context)          
+#     if not request.user.is_authenticated:
+#         return HttpResponseRedirect('borrow/login')
+#     else:
+#         print("homepage")
+#         if request.method == 'POST':
+#                 info = request.POST
+                
+#                 print(info)
+#         context = {
+#             'stuff_type':STUFF_NAME,
+#             'room_type': ALL_ROOM,
+#         }
+#         form = BorrowRecordForm(request.POST or None)  
+#         print(request.POST)
+#         if form.is_valid():
+#             raw_record = form.save(commit = False)
+#             raw_record.borrower = request.user
+#             return HttpResponseRedirect('/borrow')
+#         context = {
+#             "form": form,
+#             "all_user" : User.objects.all(),
+#         }
+#         return render(request, 'book/add_book.html', context)          
 
 def BorrowRequest(request, book_id):
     if not request.user.is_authenticated:
@@ -136,3 +157,9 @@ def logout(request):
         return render(request, 'borrow/login.html')
     else:
         return render(request, 'borrow/homepage_guest.html')
+
+
+
+
+
+

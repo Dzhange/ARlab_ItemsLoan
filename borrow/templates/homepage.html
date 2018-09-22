@@ -23,16 +23,33 @@
 
 <script>
     $(document).ready(function () {
-
+        var count = 1; 
         $('#bt-add').click(function () {
-            $("#pa-c").append(
-                "<br></br><div class = \"form-group\"><select class= \"custom-select d-block witems-100\" >>{% for item in stuff_type %}<option>{{item}}</option>{%endfor%}</select></div>\
-                <div><label>数量</label><input class = \"form-control\" type = \"number\"></div>"
-            )
+            count += 1 ;
+            var select_name = "StuffToUse" + count;
+            var select_id = "id" + select_name;
+            var number_name = count + "_number";
+            var number_id = "id" + number_name;
             console.log('fuck')
+            $("#pa-c").append(
+                "<br></br><div class = \"form-group\"><select id=\""+ select_id + "\" name = \"" + select_name + "\"class= \"custom-select d-block witems-100\" >>{% for item in stuff_type %}<option>{{item}}</option>{%endfor%}</select></div>\
+                <div><label>数量</label><input  name = \""+number_name+ "\"class = \"form-control\" type = \"number\"></div>"
+            )
+            
         })
     })
 </script>
+
+
+{% comment %} <select class="custom-select d-block witems-100" id="id_StuffToUse" name="StuffToUse">
+                            
+    <option>('EP', 'EarPhone')</option>&gt; 
+    <option>('PT', 'Printer')</option>&gt; 
+    <option>('SP', 'Speaker')</option>&gt; 
+    <option>('DT', 'Ddesktop')</option>&gt; 
+    <option>('MC', 'iMac')</option>&gt; 
+</select> {% endcomment %}
+
 
 
 <body class="bg-light" data-gr-c-s-loaded="true">
@@ -57,7 +74,7 @@
                     </div>
                     <div>
                         <label>数量</label>
-                        <input type = "number" class = "form-control">
+                        <input type = "number" class = "form-control" name = "1_number">
                     </div>
                 </div>
                 <br></br>
@@ -77,7 +94,7 @@
                 <fieldset>
                     <div class="form-group">
                         <label for="dtp_input1" class="col-md-2 control-label">开始时间</label>
-                        <div class="input-group date form_datetime col-md-5" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss "
+                        <div class="input-group date form_datetime col-md-5" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss"
                             data-link-field="dtp_input1">
                             <input class="form-control" size="16" type="text" value="" name="StartTime" id="id_StarTime" readonly>
                             <span class="input-group-addon">
