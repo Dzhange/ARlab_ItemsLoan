@@ -24,6 +24,9 @@ def index(request):
                 'stuff_type':STUFF_NAME,
                 'room_type': ROOM_LIST,
             }
+            stuff = Stuff.objects.all()
+            for item in stuff:
+                print(item.spec)
             if request.method == 'POST':
                 info = request.POST
                 print (info)
@@ -38,12 +41,20 @@ def index(request):
                 )
                 record.save()
                 for key in info.items():
-                    if "StaffToUse" in key:
-                        temp = info.__getitem__(key)
-                        remainingstuff = BorrowRecord.objects.filter( spec = temp).filter(is_booked = false)
-                        print("temp is ",temp)
-                        print("remainstuff type is ",type(remainingstuff))
-                print (record.StartTime)
+                    if "StuffToUse" in key[0]:
+                        name = key[1].split('\'')    
+                        remainingstuff = Stuff.objects.filter( spec = name[1]).filter(is_booked=False)
+                        require_number = int(key[0][-1])
+                        for candidate in info.items():
+                            if str(require_number) + "_number" in candidate[0]:
+                                amount = candidate[1]
+                                if (amount > remainingstuff.count()):
+                                    context = {
+                                        'wrong_message': "over_quantity",
+                                    }
+                                    return render(request,'homepage.html',context)
+                                else:
+                                    print("PASS FOR TEMP")
             return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
 

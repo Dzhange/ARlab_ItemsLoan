@@ -56,7 +56,7 @@ class Room(models.Model):
 class BorrowRecord(models.Model):
     StartTime = models.DateTimeField()
     EndTime =  models.DateTimeField()
-    ApplyTime = models.DateTimeField(auto_now_add=True)
+    # ApplyTime = models.DateTimeField(auto_now_add=True)
     is_approved = models.BooleanField(default=False)
     StuffToUse = models.ManyToManyField(Stuff,blank = True, related_name = 'common')
     OtherRequests = models.CharField(default = '无',max_length=100,blank = True)

@@ -61,20 +61,20 @@
         </div>
 
 
-        <form class="needs-validation" role="form" method="post" action="" enctype="multipart/form-data">
+        <form id="requestform" class="needs-validation" role="form" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
                 <div id="pa-c">
                     <div class="mb-3">
                         <label for="count">可外借物品</label>
-                        <select class="custom-select d-block witems-100" id="id_StuffToUse" name="StuffToUse">
+                        <select class="custom-select d-block witems-100" id="id_StuffToUse0" name="StuffToUse0">
                             {% for item in stuff_type %}
                             <option>{{item}}</option>> {% endfor %}
                         </select>
                     </div>
                     <div>
                         <label>数量</label>
-                        <input type = "number" class = "form-control" name = "1_number">
+                        <input type = "number" class = "form-control" name = "0_number">
                     </div>
                 </div>
                 <br></br>
@@ -96,7 +96,7 @@
                         <label for="dtp_input1" class="col-md-2 control-label">开始时间</label>
                         <div class="input-group date form_datetime col-md-5" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss"
                             data-link-field="dtp_input1">
-                            <input class="form-control" size="16" type="text" value="" name="StartTime" id="id_StarTime" readonly>
+                            <input class="form-control" size="16" type="text" value="" name="StartTime" id="id_StarTime" readonly required>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </span>
@@ -111,7 +111,7 @@
                         <label for="dtp_input1" class="col-md-2 control-label">结束时间</label>
                         <div class="input-group date form_datetime col-md-5" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss"
                             data-link-field="dtp_input1">
-                            <input class="form-control" size="16" type="text" value="" name='EndTime' id="id_EndTime" readonly>
+                            <input class="form-control" size="16" type="text" value="" name='EndTime' id="id_EndTime" readonly required>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </span>
