@@ -125,14 +125,16 @@
                 </fieldset>
 
             </div>
-            <div class="mb-3">
-                <label for="count">可借房间</label>
-                <select class="custom-select d-block w-100" id="room">
-                    <option value="">选择...</option>
-                    {%for room in room_type%}
-                    <option value="">{{room}}</option>
-                    {%endfor%}
-                </select>
+            <div class="form-group">
+                <div class="mb-3">
+                    <label for="count">可借房间</label>
+                    <select class="custom-select d-block w-100" id="id_room" name="room">
+                        <option value="">选择...</option>
+                        {%for room in room_type%}
+                        <option value="">{{room}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
             </div>
 
 

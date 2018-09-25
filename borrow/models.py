@@ -31,6 +31,16 @@ s_STUFF_NAME = {
         'EarPhone',
     }
 
+s_ROOM_NAME ={
+        '301',
+        'All Boots(ABCD) in 302',
+        'Boot A in 302',
+        'Boot B in 302',
+        'Boot C in 302',
+        'Boot D in 302',
+    }
+
+
 STATUS_LIST = {
         ('PF','Perfect'),
         ('SB','Slightly Broken'),
@@ -60,9 +70,10 @@ class BorrowRecord(models.Model):
     is_approved = models.BooleanField(default=False)
     StuffToUse = models.ManyToManyField(Stuff,blank = True, related_name = 'common')
     OtherRequests = models.CharField(default = '无',max_length=100,blank = True)
-    SecretObjects = models.ManyToManyField(Stuff,blank = True,related_name = 'secret')
+    # SecretObjects = models.ManyToManyField(Stuff,blank = True,related_name = 'secret')
     RoomToUse = models.ManyToManyField(Room,blank = True)
     borrower= models.ForeignKey(User, on_delete=models.CASCADE)
+    ErrorMessage=models.CharField(default=" ",max_length=500)
 
     
-    
+        

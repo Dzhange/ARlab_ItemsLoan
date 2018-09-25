@@ -12,6 +12,22 @@ from .models import *
 
 ADMIN = ('YangTheBoss','Django','Aoliao')
 
+NameDict = {
+    'iMac':'MC',
+    'Ddesktop':'DT',
+    'Printer':'PT',
+    'Speaker':'SP',
+    'EarPhone':'EP',
+}
+
+RoomDict ={
+        '301'：'FR',
+        'All Boots(ABCD) in 302'：'ST',
+        'Boot A in 302'：'SA',
+        'Boot B in 302'：'SB',
+        'Boot C in 302'：'SC',
+        'Boot D in 302'：'SD',
+    }
 # Create your views here.
 def index(request):
     # User has to login then view the site
@@ -21,12 +37,10 @@ def index(request):
         user = request.user
         if user.username not in ADMIN:
             context = {
-                'stuff_type':STUFF_NAME,
-                'room_type': ROOM_LIST,
+                'stuff_type':s_STUFF_NAME,
+                'room_type': s_ROOM_NAME,
             }
             stuff = Stuff.objects.all()
-            for item in stuff:
-                print(item.spec)
             if request.method == 'POST':
                 info = request.POST
                 print (info)
@@ -42,19 +56,30 @@ def index(request):
                 record.save()
                 for key in info.items():
                     if "StuffToUse" in key[0]:
-                        name = key[1].split('\'')    
-                        remainingstuff = Stuff.objects.filter( spec = name[1]).filter(is_booked=False)
+                        # this item is to be added 
+                        name = key[1]
+                        name=NameDict[name]    
+                        remainingstuff = Stuff.objects.filter( spec = name).filter(is_booked=False)
                         require_number = int(key[0][-1])
                         for candidate in info.items():
-                            if str(require_number) + "_number" in candidate[0]:
-                                amount = candidate[1]
+                            if str(require_number) + "_number" in candidate[0] and len(candidate[1])>0:
+                                amount = int(candidate[1])
                                 if (amount > remainingstuff.count()):
                                     context = {
                                         'wrong_message': "over_quantity",
                                     }
+                                    record.delete()
                                     return render(request,'homepage.html',context)
                                 else:
-                                    print("PASS FOR TEMP")
+                                    itemToAdd = remainingstuff[:amount]
+                                    for target in itemToAdd:
+                                        record.StuffToUse.add(target)
+                                    print("---------------------PASS FOR TEMP")
+                    if "room" in key[0]:
+                        name = key[1]
+                        name=RoomDict[name]
+                        remainRoom = Room.objects.filter( spec = name).filter(is_booked=False)
+                        
             return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
 
