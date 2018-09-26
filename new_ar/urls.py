@@ -18,5 +18,5 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('borrow/',include("borrow.urls")),
+    path('borrow/',include("borrow.urls",namespace="borrow")),
 ]

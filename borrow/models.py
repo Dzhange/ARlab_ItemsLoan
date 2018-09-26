@@ -62,7 +62,7 @@ class Room(models.Model):
     
     def __str__(self):
         return self.spec
-
+    
 class BorrowRecord(models.Model):
     StartTime = models.DateTimeField()
     EndTime =  models.DateTimeField()

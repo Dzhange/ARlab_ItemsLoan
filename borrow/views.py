@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from .models import *
 
 
-ADMIN = ('YangTheBoss','Django','Aoliao')
+ADMIN = ('YangTheBoss','Django','TTL')
 
 NameDict = {
     'iMac':'MC',
@@ -21,18 +21,18 @@ NameDict = {
 }
 
 RoomDict ={
-        '301'：'FR',
-        'All Boots(ABCD) in 302'：'ST',
-        'Boot A in 302'：'SA',
-        'Boot B in 302'：'SB',
-        'Boot C in 302'：'SC',
-        'Boot D in 302'：'SD',
+        '301':'FR',
+        'All Boots(ABCD) in 302':'ST',
+        'Boot A in 302':'SA',
+        'Boot B in 302':'SB',
+        'Boot C in 302':'SC',
+        'Boot D in 302':'SD',
     }
 # Create your views here.
 def index(request):
     # User has to login then view the site
     if not request.user.is_authenticated:
-        return HttpResponseRedirect('borrow/login')
+        return HttpResponseRedirect('login')
     else:
         user = request.user
         if user.username not in ADMIN:
@@ -76,38 +76,15 @@ def index(request):
                                         record.StuffToUse.add(target)
                                     print("---------------------PASS FOR TEMP")
                     if "room" in key[0]:
+                        # now it only support one room for 
                         name = key[1]
                         name=RoomDict[name]
                         remainRoom = Room.objects.filter( spec = name).filter(is_booked=False)
-                        
+                        if remainRoom.count() > 0:
+                            for room in remainRoom:
+                                record.RoomToUse.add(room)    
             return render(request,'homepage.html',context)
         return render(request, 'borrow/administration.html')
-
-# def Homepage(request):
-
-#     if not request.user.is_authenticated:
-#         return HttpResponseRedirect('borrow/login')
-#     else:
-#         print("homepage")
-#         if request.method == 'POST':
-#                 info = request.POST
-                
-#                 print(info)
-#         context = {
-#             'stuff_type':STUFF_NAME,
-#             'room_type': ALL_ROOM,
-#         }
-#         form = BorrowRecordForm(request.POST or None)  
-#         print(request.POST)
-#         if form.is_valid():
-#             raw_record = form.save(commit = False)
-#             raw_record.borrower = request.user
-#             return HttpResponseRedirect('/borrow')
-#         context = {
-#             "form": form,
-#             "all_user" : User.objects.all(),
-#         }
-#         return render(request, 'book/add_book.html', context)          
 
 def BorrowRequest(request, book_id):
     if not request.user.is_authenticated:
@@ -125,7 +102,6 @@ def BorrowRequest(request, book_id):
         }
         return render(request,'borrow/',context)
 
-
 def PersonalHistory(request,user_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('borrow/login')
@@ -137,7 +113,6 @@ def PersonalHistory(request,user_id):
                 'user' : request.user,
             }
             return render(request,'borrow/personalhistory.html',context)
-
 
 def AllHistory(request):
     if not request.user.is_authenticated:
@@ -166,14 +141,13 @@ def register(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return render(request, 'borrow/homepage.html')
-
+                return render(request, 'homepage.html')
     context = {
         "form": form,
     }
-    return render(request, 'book/register.html', context)
+    return render(request, 'register.html', context)
 
-def login(request):
+def login_i(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -181,21 +155,17 @@ def login(request):
         if user is not None:
             login(request, user)
             if user.username in ADMIN:
-                return HttpResponseRedirect('borrow/administration')
-            return HttpResponseRedirect('borrow/homepage')
+                return HttpResponseRedirect('/borrow')
+                # return HttpResponseRedirect('borrow/administration')
+            return HttpResponseRedirect('/borrow')
         else :
-            return render(request, 'borrow/login.html')
+            return render(request, 'login.html')
     else:
-        return render(request, 'borrow/login.html')
+        return render(request, 'login.html')
 
-def logout(request):
+def logout_i(request):
     if not request.user.is_authenticated:
-        return render(request, 'borrow/login.html')
+        return render(request, 'login.html')
     else:
-        return render(request, 'borrow/homepage_guest.html')
-
-
-
-
-
-
+        logout(request)
+        return render(request, 'login.html')
