@@ -1,0 +1,70 @@
+{% extends 'base.html' %} 
+{%block body%}
+
+<body data-gr-c-s-loaded="true">
+        
+    
+    <div class="container-fluid">
+          
+        <div class="row">
+            <main role="main" class="col-md-11 ml-sm-auto col-lg-11 pt-3 px-0">
+                            
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                  <thead>
+                    <tr>
+                      <th>Stuff</th>
+                      <th>Stuff Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in record.StuffToUse.all%}
+                    <tr>
+                      <td>
+                          {{item}}
+                      </td>
+                      <td>
+                        <form id="requestform" class="needs-validation" role="form" method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input type="hidden"  class="form-control"  value = "status" name="choice">
+                            </div>
+                            <div class="form-group">
+                                <select class="custom-select d-block witems-100" id="id_NewStatus" name="NewStatus">
+                                        <option value="">Choose...</option>
+                                        {% for status in status_list %}
+                                        <option>{{status}}</option>> 
+                                        {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden"  class="form-control"  value = {{item.id}} name="item_id">
+                            </div>
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                        </form>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
+                    </table>
+              </div>
+              <form id="requestform" class="needs-validation" role="form" method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden"  class="form-control"  value = "close" name="choice">
+                </div>
+                <div class="alert alert-danger" role="alert">
+                  Press The button means you have finished the loan, and will return borrowed stuff.
+                  This operation CAN NOT BE UNDO
+                </div>
+                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Close This Loan</button>
+            </form>
+
+            </main>
+          </div>
+        </div>
+      </body>
+      
+
+
+{%endblock%}

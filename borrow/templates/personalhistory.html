@@ -1,0 +1,83 @@
+{% extends 'base.html' %} 
+{%block body%}
+
+<body data-gr-c-s-loaded="true">
+ <div class="container-fluid">
+   <div class="row">
+     <main role="main" class="col-md-11 ml-sm-auto col-lg-11 pt-3 px-0">
+       <div class="table-responsive">
+         <table class="table table-striped table-sm">
+           <thead>
+             <tr>
+               <th>Stuff</th>
+               <th>Room</th>
+               <th>StartTime</th>
+               <th>EndTime</th>
+               <th>BrokenStuff</th>
+               <th>Record Status</th>
+               <th>Update Record</th>
+             </tr>
+           </thead>
+           <tbody>
+             {% for record in records%}
+             <tr>
+               <td>
+                 {%for item in record.StuffToUse.all%}
+                 {{item}}, 
+                 {%endfor%}
+               </td>
+               <td>
+                   {%for room in record.RoomToUse.all%}
+                   {{room}}, 
+                   {%endfor%}
+                 </td>
+               <td>{{record.StartTime}}</td>
+               <td>{{record.EndTime}}</td>
+               <td>
+                 {%for item in record.StuffToUse.all%}
+                 {% if item.status != 'PF'%}
+                 {{item}}({{item.status}})
+                 {%endif%}
+                 {%endfor%}
+               </td>
+               <td>
+                {% if record.is_approved%}
+                    {% if record.is_closed%}
+                       <div class="alert alert-info" role="alert">
+                       Is Finished                          
+                        </div>
+                    {%else%}
+                        
+                        <div class="alert alert-info" role="alert">
+                            In use                        
+                             </div>
+                    {%endif%}            
+                {%else%}
+                    {% if record.is_closed%}
+                        <div class="alert alert-info" role="alert">
+                            Closed and  not Performed                                                   
+                             </div>
+                    {%else%}
+                        <div class="alert alert-info" role="alert">
+                            Waiting For Approve
+                             </div>
+                    {%endif%}
+                {%endif%}
+                </td>
+                <td>
+                    <a href="/borrow/detail/{{record.id}}">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Detail</button>
+                </td>
+             </tr>
+             {%endfor%}
+           </tbody>
+         </table>
+       </div>
+     </main>
+   </div>
+ </div>
+</body>
+
+</html>
+
+{%endblock%}
